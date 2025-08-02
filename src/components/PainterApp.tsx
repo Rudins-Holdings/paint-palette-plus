@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, DollarSign, Camera, Palette, FileText, Star } from "lucide-react";
+import { benjaminMooreColors, colorCollections } from "@/data/benjamin-moore-colors";
 
 const mockProjects = [
   {
@@ -214,9 +215,20 @@ export const PainterApp = () => {
                 <CardTitle>Benjamin Moore Color Library</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">Access the complete Benjamin Moore color collection for your projects.</p>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
+                  {benjaminMooreColors.slice(0, 12).map((color) => (
+                    <div key={color.code} className="text-center">
+                      <div 
+                        className="w-full h-16 rounded-lg mb-2 border"
+                        style={{ backgroundColor: color.hex }}
+                      />
+                      <p className="text-xs font-medium">{color.name}</p>
+                      <p className="text-xs text-muted-foreground">{color.code}</p>
+                    </div>
+                  ))}
+                </div>
                 <Button className="bg-gradient-to-r from-primary to-accent text-primary-foreground">
-                  Browse Colors
+                  View All {benjaminMooreColors.length} Colors
                 </Button>
               </CardContent>
             </Card>
