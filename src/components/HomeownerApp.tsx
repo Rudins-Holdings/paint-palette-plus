@@ -51,40 +51,111 @@ export const HomeownerApp = () => {
           </TabsList>
 
           <TabsContent value="visualizer" className="space-y-6">
-            <Card className="shadow-elegant">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Upload className="w-5 h-5" />
-                  Upload Your Home Photos
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
-                  <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-lg font-medium mb-2">Drop your photos here</p>
-                  <p className="text-muted-foreground mb-4">Upload photos of rooms you want to paint</p>
-                  <Button className="bg-gradient-to-r from-primary to-accent text-primary-foreground">
-                    Choose Files
-                  </Button>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card className="p-4">
-                    <h3 className="font-medium mb-2">Day View Simulation</h3>
-                    <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                      <p className="text-muted-foreground">Upload photo to see day view</p>
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              {/* Main Photo Area */}
+              <div className="lg:col-span-3">
+                <Card className="shadow-elegant">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Upload className="w-5 h-5" />
+                      Upload Your Home Photos
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
+                      <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                      <p className="text-lg font-medium mb-2">Drop your photos here</p>
+                      <p className="text-muted-foreground mb-4">Upload photos of rooms you want to paint</p>
+                      <Button className="bg-gradient-to-r from-primary to-accent text-primary-foreground">
+                        Choose Files
+                      </Button>
                     </div>
-                  </Card>
-                  
-                  <Card className="p-4">
-                    <h3 className="font-medium mb-2">Night View Simulation</h3>
-                    <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                      <p className="text-muted-foreground">Upload photo to see night view</p>
+                    
+                    {/* Photo Preview with Color Application */}
+                    <Card className="p-4">
+                      <h3 className="font-medium mb-2">Color Preview</h3>
+                      <div className="aspect-video bg-muted rounded-lg flex items-center justify-center relative overflow-hidden">
+                        <p className="text-muted-foreground">Upload photo to start visualizing colors</p>
+                        {/* Color overlay areas would be rendered here */}
+                      </div>
+                      <div className="flex gap-2 mt-3">
+                        <Button variant="outline" size="sm">Walls</Button>
+                        <Button variant="outline" size="sm">Accent</Button>
+                        <Button variant="outline" size="sm">Trim</Button>
+                        <Button variant="outline" size="sm">Reset</Button>
+                      </div>
+                    </Card>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Color Selection Pane */}
+              <div className="lg:col-span-1">
+                <Card className="shadow-elegant sticky top-6">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Palette className="w-5 h-5" />
+                      Quick Colors
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Element Selector */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Select Element</label>
+                      <div className="grid grid-cols-3 gap-1">
+                        <Button variant="outline" size="sm" className="text-xs">Walls</Button>
+                        <Button variant="outline" size="sm" className="text-xs">Accent</Button>
+                        <Button variant="outline" size="sm" className="text-xs">Trim</Button>
+                      </div>
                     </div>
-                  </Card>
-                </div>
-              </CardContent>
-            </Card>
+
+                    {/* Color Swatches */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Popular Colors</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {benjaminMooreColors.slice(0, 9).map((color) => (
+                          <button
+                            key={color.code}
+                            className="w-full aspect-square rounded-lg border-2 border-muted hover:border-primary transition-colors"
+                            style={{ backgroundColor: color.hex }}
+                            title={color.name}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Selected Color Info */}
+                    <div className="p-3 bg-muted/50 rounded-lg">
+                      <h4 className="text-sm font-medium mb-2">Current Selection</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 rounded-full bg-primary border"></div>
+                          <span className="text-xs">Walls: Cloud White</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 rounded-full bg-accent border"></div>
+                          <span className="text-xs">Accent: Hale Navy</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 rounded-full bg-muted-foreground border"></div>
+                          <span className="text-xs">Trim: White Dove</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="space-y-2">
+                      <Button className="w-full bg-gradient-to-r from-primary to-accent text-primary-foreground" size="sm">
+                        Apply Colors
+                      </Button>
+                      <Button variant="outline" className="w-full" size="sm">
+                        Save Combination
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </TabsContent>
 
           <TabsContent value="colors" className="space-y-6">
