@@ -7,11 +7,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Upload, Palette, Calculator, FileText, MessageSquare, Home } from "lucide-react";
 import { benjaminMooreColors, colorCollections } from "@/data/benjamin-moore-colors";
+import { ImageSegmentation, RoomElement } from "./ImageSegmentation";
 
 export const HomeownerApp = () => {
   const [activeTab, setActiveTab] = useState("visualizer");
   const [selectedColor, setSelectedColor] = useState(benjaminMooreColors[0]);
   const [selectedCollection, setSelectedCollection] = useState("All Collections");
+  const [roomElements, setRoomElements] = useState<RoomElement[]>([]);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [selectedElement, setSelectedElement] = useState<string | null>(null);
+
+  const handleElementsDetected = (elements: RoomElement[]) => {
+    setRoomElements(elements);
+  };
+
+  const handleImageUploaded = (imageUrl: string) => {
+    setUploadedImage(imageUrl);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
@@ -54,39 +66,10 @@ export const HomeownerApp = () => {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               {/* Main Photo Area */}
               <div className="lg:col-span-3">
-                <Card className="shadow-elegant">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Upload className="w-5 h-5" />
-                      Upload Your Home Photos
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
-                      <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                      <p className="text-lg font-medium mb-2">Drop your photos here</p>
-                      <p className="text-muted-foreground mb-4">Upload photos of rooms you want to paint</p>
-                      <Button className="bg-gradient-to-r from-primary to-accent text-primary-foreground">
-                        Choose Files
-                      </Button>
-                    </div>
-                    
-                    {/* Photo Preview with Color Application */}
-                    <Card className="p-4">
-                      <h3 className="font-medium mb-2">Color Preview</h3>
-                      <div className="aspect-video bg-muted rounded-lg flex items-center justify-center relative overflow-hidden">
-                        <p className="text-muted-foreground">Upload photo to start visualizing colors</p>
-                        {/* Color overlay areas would be rendered here */}
-                      </div>
-                      <div className="flex gap-2 mt-3">
-                        <Button variant="outline" size="sm">Walls</Button>
-                        <Button variant="outline" size="sm">Accent</Button>
-                        <Button variant="outline" size="sm">Trim</Button>
-                        <Button variant="outline" size="sm">Reset</Button>
-                      </div>
-                    </Card>
-                  </CardContent>
-                </Card>
+                <ImageSegmentation 
+                  onElementsDetected={handleElementsDetected}
+                  onImageUploaded={handleImageUploaded}
+                />
               </div>
 
               {/* Color Selection Pane */}
@@ -95,63 +78,100 @@ export const HomeownerApp = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Palette className="w-5 h-5" />
-                      Quick Colors
+                      Color Assignment
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {/* Element Selector */}
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Select Element</label>
-                      <div className="grid grid-cols-3 gap-1">
-                        <Button variant="outline" size="sm" className="text-xs">Walls</Button>
-                        <Button variant="outline" size="sm" className="text-xs">Accent</Button>
-                        <Button variant="outline" size="sm" className="text-xs">Trim</Button>
-                      </div>
-                    </div>
-
-                    {/* Color Swatches */}
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Popular Colors</label>
-                      <div className="grid grid-cols-3 gap-2">
-                        {benjaminMooreColors.slice(0, 9).map((color) => (
-                          <button
-                            key={color.code}
-                            className="w-full aspect-square rounded-lg border-2 border-muted hover:border-primary transition-colors"
-                            style={{ backgroundColor: color.hex }}
-                            title={color.name}
-                          />
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Selected Color Info */}
-                    <div className="p-3 bg-muted/50 rounded-lg">
-                      <h4 className="text-sm font-medium mb-2">Current Selection</h4>
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 rounded-full bg-primary border"></div>
-                          <span className="text-xs">Walls: Cloud White</span>
+                    {roomElements.length > 0 ? (
+                      <>
+                        {/* Detected Elements */}
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Detected Elements</label>
+                          <div className="space-y-2">
+                            {roomElements.filter(e => e.confirmed).map((element) => (
+                              <Button
+                                key={element.id}
+                                variant={selectedElement === element.id ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => setSelectedElement(element.id)}
+                                className="w-full justify-start text-xs"
+                              >
+                                {element.type.replace('_', ' ').split(' ').map(word => 
+                                  word.charAt(0).toUpperCase() + word.slice(1)
+                                ).join(' ')}
+                                {element.color && (
+                                  <div 
+                                    className="w-3 h-3 rounded-full ml-auto border"
+                                    style={{ backgroundColor: element.color }}
+                                  />
+                                )}
+                              </Button>
+                            ))}
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 rounded-full bg-accent border"></div>
-                          <span className="text-xs">Accent: Hale Navy</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 rounded-full bg-muted-foreground border"></div>
-                          <span className="text-xs">Trim: White Dove</span>
-                        </div>
-                      </div>
-                    </div>
 
-                    {/* Action Buttons */}
-                    <div className="space-y-2">
-                      <Button className="w-full bg-gradient-to-r from-primary to-accent text-primary-foreground" size="sm">
-                        Apply Colors
-                      </Button>
-                      <Button variant="outline" className="w-full" size="sm">
-                        Save Combination
-                      </Button>
-                    </div>
+                        {/* Color Swatches */}
+                        {selectedElement && (
+                          <div>
+                            <label className="text-sm font-medium mb-2 block">Choose Color</label>
+                            <div className="grid grid-cols-3 gap-2">
+                              {benjaminMooreColors.slice(0, 9).map((color) => (
+                                <button
+                                  key={color.code}
+                                  className="w-full aspect-square rounded-lg border-2 border-muted hover:border-primary transition-colors"
+                                  style={{ backgroundColor: color.hex }}
+                                  title={color.name}
+                                  onClick={() => {
+                                    setRoomElements(prev => 
+                                      prev.map(el => 
+                                        el.id === selectedElement 
+                                          ? { ...el, color: color.hex }
+                                          : el
+                                      )
+                                    );
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Current Assignments */}
+                        <div className="p-3 bg-muted/50 rounded-lg">
+                          <h4 className="text-sm font-medium mb-2">Color Assignments</h4>
+                          <div className="space-y-1">
+                            {roomElements.filter(e => e.confirmed && e.color).map((element) => (
+                              <div key={element.id} className="flex items-center gap-2">
+                                <div 
+                                  className="w-3 h-3 rounded-full border"
+                                  style={{ backgroundColor: element.color }}
+                                />
+                                <span className="text-xs">
+                                  {element.type.replace('_', ' ').split(' ').map(word => 
+                                    word.charAt(0).toUpperCase() + word.slice(1)
+                                  ).join(' ')}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="space-y-2">
+                          <Button className="w-full bg-gradient-to-r from-primary to-accent text-primary-foreground" size="sm">
+                            Apply Colors to Image
+                          </Button>
+                          <Button variant="outline" className="w-full" size="sm">
+                            Save Combination
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-8">
+                        <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                        <p className="text-sm text-muted-foreground">Upload a room photo to start identifying elements</p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>
