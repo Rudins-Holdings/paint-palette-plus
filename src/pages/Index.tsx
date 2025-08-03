@@ -17,13 +17,20 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+    <div className="min-h-screen bg-primary">
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <div className="mb-8">
+            <img 
+              src="/Property Management App Logo.png" 
+              alt="RealWize Pro Logo" 
+              className="h-32 max-w-full mx-auto mb-6 object-contain"
+            />
+          </div>
+          <h1 className="text-5xl font-bold mb-6 text-white">
             Professional Painting Platform
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-white/90 max-w-2xl mx-auto">
             Connect homeowners with professional painters. Visualize colors, get quotes, and manage projects seamlessly.
           </p>
         </div>
@@ -77,7 +84,7 @@ const Index = () => {
         </div>
 
         <div className="text-center mt-16">
-          <p className="text-muted-foreground">
+          <p className="text-white/70">
             Demo Mode - Choose your role to explore the platform
           </p>
         </div>
